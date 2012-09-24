@@ -1,0 +1,44 @@
+Overview
+========
+
+Utility functions for working with fonts in Emacs.
+
+Quickstart
+----------
+
+	(require 'font-utils)
+
+	(font-utils-exists-p "Courier")
+
+font-utils
+----------
+
+Font-utils is a collection of functions for working with fonts.
+This library has no user-level interface; it is only useful
+for programming in Emacs Lisp.
+
+The following functions are provided, most of which deal with
+font names rather than font objects:
+
+	font-utils-exists-p
+	font-utils-first-existing-font
+	font-utils-lenient-name-equal
+	font-utils-list-names
+	font-utils-name-from-xlfd
+	font-utils-read-name
+
+The most generally useful of these is `font-utils-exists-p`, which
+tests whether a font matching the given name is currently available
+for use.
+
+To use font-utils, place the font-utils.el library somewhere
+Emacs can find it, and add the following to your ~/.emacs file:
+
+	(require 'font-utils)
+
+Compatibility and Requirements
+------------------------------
+
+Tested on GNU Emacs versions 23.3 and 24.1
+
+Requires [persistent-soft.el](http://github.com/rolandwalker/persistent-soft)
