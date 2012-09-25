@@ -41,4 +41,4 @@ Compatibility and Requirements
 
 Tested on GNU Emacs versions 23.3 and 24.1
 
-Requires [persistent-soft.el](http://github.com/rolandwalker/persistent-soft)
+Uses if present: [persistent-soft.el](http://github.com/rolandwalker/persistent-soft) (Recommended)

@@ -56,7 +56,7 @@
 ;;
 ;;     Tested on GNU Emacs versions 23.3 and 24.1
 ;;
-;;     Requires persistent-soft.el
+;;     Uses if present: persistent-soft.el (Recommended)
 ;;
 ;; Bugs
 ;;
@@ -191,6 +191,21 @@ the pathological case with regard to startup time."
 (defvar font-utils-exists-p-mem (make-hash-table :test 'equal)
   "Memoization data for `font-utils-exists-p'.")
 
+;;; compatibility functions
+
+(defun persistent-softest-store (symbol value location &optional expiration)
+  "Call `persistent-soft-store' but don't fail when library not present."
+  (ignore-errors (persistent-soft-store symbol value location expiration)))
+(defun persistent-softest-fetch (symbol location)
+  "Call `persistent-soft-fetch' but don't fail when library not present."
+  (ignore-errors (persistent-soft-fetch symbol location)))
+(defun persistent-softest-exists-p (symbol location)
+  "Call `persistent-soft-exists-p' but don't fail when library not present."
+  (ignore-errors (persistent-soft-exists-p symbol location)))
+(defun persistent-softest-flush (location)
+  "Call `persistent-soft-flush' but don't fail when library not present."
+  (ignore-errors (persistent-soft-flush location)))
+
 ;;; utility functions
 
 ;;;###autoload
@@ -266,23 +281,24 @@ scratch."
   (when (display-multi-font-p)
     (when regenerate
       (setq font-utils-all-names nil)
-      (persistent-soft-store (intern (format "checksum-%s" window-system))
+      (persistent-softest-store (intern (format "checksum-%s" window-system))
                              nil font-utils-use-persistent-storage)
-      (persistent-soft-store (intern (format "font-names-%s" window-system))
+      (persistent-softest-store (intern (format "font-names-%s" window-system))
                              nil font-utils-use-persistent-storage)
-      (persistent-soft-flush font-utils-use-persistent-storage))
+      (persistent-softest-flush font-utils-use-persistent-storage))
     (unless (or (hash-table-p font-utils-all-names)
                 (not font-utils-use-memory-cache))
       (when progress
         (message "Font cache ... checking"))
-      (let* ((old-checksum (persistent-soft-fetch (intern (format "checksum-%s" window-system)) font-utils-use-persistent-storage))
+      (let* ((old-checksum (persistent-softest-fetch
+                            (intern (format "checksum-%s" window-system)) font-utils-use-persistent-storage))
              (listing (font-utils-list-names))
              (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
              (dupes nil))
         (when (equal old-checksum new-checksum)
-          (setq font-utils-all-names (persistent-soft-fetch
-                                          (intern (format "font-names-%s" window-system))
-                                          font-utils-use-persistent-storage)))
+          (setq font-utils-all-names (persistent-softest-fetch
+                                      (intern (format "font-names-%s" window-system))
+                                      font-utils-use-persistent-storage)))
         (unless (hash-table-p font-utils-all-names)
           (when progress
             (message "Font cache ... rebuilding"))
@@ -297,11 +313,11 @@ scratch."
           (delete-dups dupes)
           (dolist (fuzzy-name dupes)
             (remhash fuzzy-name font-utils-all-names))
-          (persistent-soft-store (intern (format "checksum-%s" window-system))
-                                 new-checksum font-utils-use-persistent-storage)
-          (persistent-soft-store (intern (format "font-names-%s" window-system))
-                                 font-utils-all-names font-utils-use-persistent-storage)
-          (persistent-soft-flush font-utils-use-persistent-storage)))
+          (persistent-softest-store (intern (format "checksum-%s" window-system))
+                                    new-checksum font-utils-use-persistent-storage)
+          (persistent-softest-store (intern (format "font-names-%s" window-system))
+                                    font-utils-all-names font-utils-use-persistent-storage)
+          (persistent-softest-flush font-utils-use-persistent-storage)))
       (when progress
         (message "Font cache ... done")))))
 
