@@ -5,7 +5,7 @@
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/font-utils
 ;; URL: http://raw.github.com/rolandwalker/font-utils/master/font-utils.el
-;; Version: 0.6.1
+;; Version: 0.6.2
 ;; Last-Updated: 24 Sep 2012
 ;; EmacsWiki: FontUtils
 ;; Package-Requires: ((persistent-soft "0.8.0") (pcache "0.2.3"))
@@ -135,7 +135,7 @@
 ;;;###autoload
 (defgroup font-utils nil
   "Utility functions for working with fonts."
-  :version "0.6.1"
+  :version "0.6.2"
   :link '(emacs-commentary-link "font-utils")
   :prefix "font-utils-"
   :group 'extensions)
