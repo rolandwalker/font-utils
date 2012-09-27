@@ -8,9 +8,11 @@ Utility functions for working with fonts in Emacs.
 Quickstart
 ----------
 
-	(require 'font-utils)
-
-	(font-utils-exists-p "Courier")
+```lisp
+(require 'font-utils)
+ 
+(font-utils-exists-p "Courier")
+```
 
 font-utils
 ----------
@@ -36,7 +38,9 @@ for use.
 To use font-utils, place the font-utils.el library somewhere
 Emacs can find it, and add the following to your ~/.emacs file:
 
-	(require 'font-utils)
+```lisp
+(require 'font-utils)
+```
 
 Compatibility and Requirements
 ------------------------------
