@@ -1,7 +1,9 @@
 language: emacs-lisp
+
 before_install:
   - git submodule --quiet update --init
   - if [ "$EMACS" = 'emacs23' ]; then
+        # the stock Emacs is 23, but with no GUI support
         sudo apt-get update -qq &&
         sudo apt-get install -qq emacs23-gtk emacs23-el;
     fi
@@ -16,13 +18,19 @@ before_install:
         sudo apt-get install -qq
         emacs-snapshot-el emacs-snapshot-gtk emacs-snapshot;
     fi
+
 matrix:
   allow_failures:
     - env: EMACS=emacs-snapshot
+
+###
+### each variation in env will be built and tested
+###
 env:
   - EMACS=emacs23
   - EMACS=emacs24
   - EMACS=emacs-snapshot
+
 before_script:
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
         # get bleeding-edge dependencies to go with snapshot
@@ -30,8 +38,9 @@ before_script:
     else
         make downloads;
     fi
+
 script:
-  $EMACS --version &&
-  make test EMACS=$EMACS
+  $EMACS --version && make test EMACS=$EMACS
+
 notifications:
   email: false
