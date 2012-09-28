@@ -4,8 +4,8 @@
 ### The travis web interface may choke silently and fail to
 ### update when there are issues with the .travis.yml file.
 ###
-### "travis-lint" does not catch all errors which may lead to
-### silent failure.
+### The "travis-lint" command-line tool does not catch all
+### errors which may lead to silent failure.
 ###
 ### Shell-style comments must have "#" as the first character
 ### of the line.
