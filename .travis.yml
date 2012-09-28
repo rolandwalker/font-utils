@@ -24,8 +24,8 @@ language: emacs-lisp
 ### ===> each variation in env/matrix will be built and tested <===
 ### ===>                                                       <===
 ###
-### variables under env/global are available but don't
-### define a separate variation
+### variables under env/global are available to the build process
+### but don't cause the creation of a separate variation
 ###
 
 env:
@@ -67,6 +67,21 @@ branches:
 
 ###
 ### runtime initialization
+###
+### notes
+###
+### emacs22 is extracted manually from Ubuntu Maverick.
+###
+### emacs23 is the stock default, but is updated anyway to
+### a GUI-capable version, which will have certain additional
+### functions compiled in.
+###
+### emacs24 (current stable release) is obtained from the
+### cassou PPA: http://launchpad.net/~cassou/+archive/emacs
+###
+### emacs-snapshot (trunk) is obtained from the cassou PPA.
+### For the emacs-snapshot build, bleeding-edge versions
+### of all test dependencies are also used.
 ###
 
 before_install:
