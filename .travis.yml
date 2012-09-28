@@ -1,7 +1,39 @@
+###
+### language
+###
+
 language: emacs-lisp
 
+###
+### defining the build matrix
+###
+### each variation in env will be built and tested
+###
+
+env:
+  - EMACS=emacs22
+  - EMACS=emacs23
+  - EMACS=emacs24
+  - EMACS=emacs-snapshot
+
+matrix:
+  allow_failures:
+    - env: EMACS=emacs-22
+    - env: EMACS=emacs-snapshot
+
+###
+### initialization of virtual test environment
+###
+
 before_install:
-  - git submodule --quiet update --init
+  # only needed if the repo has submodules
+  - git submodule --quiet update --init --recursive
+
+install:
+  - if [ "$EMACS" = 'emacs22' ]; then
+        sudo apt-get update -qq &&
+        sudo apt-get install -qq emacs22-gtk emacs22-el;
+    fi
   - if [ "$EMACS" = 'emacs23' ]; then
         # the stock Emacs is 23, but with no GUI support
         sudo apt-get update -qq &&
@@ -15,21 +47,9 @@ before_install:
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
         sudo add-apt-repository -y ppa:cassou/emacs &&
         sudo apt-get update -qq &&
-        sudo apt-get install -qq
-        emacs-snapshot-el emacs-snapshot-gtk emacs-snapshot;
+        sudo apt-get install -qq emacs-snapshot &&
+        sudo apt-get install -qq emacs-snapshot-el emacs-snapshot-gtk;
     fi
-
-matrix:
-  allow_failures:
-    - env: EMACS=emacs-snapshot
-
-###
-### each variation in env will be built and tested
-###
-env:
-  - EMACS=emacs23
-  - EMACS=emacs24
-  - EMACS=emacs-snapshot
 
 before_script:
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
@@ -39,8 +59,27 @@ before_script:
         make downloads;
     fi
 
+###
+### the actual build/test command
+###
+
 script:
   $EMACS --version && make test EMACS=$EMACS
 
+###
+### settings
+###
+
 notifications:
   email: false
+
+#
+# Emacs
+#
+# Local Variables:
+# indent-tabs-mode: nil
+# mangle-whitespace: t
+# require-final-newline: t
+# coding: utf-8
+# End:
+#
