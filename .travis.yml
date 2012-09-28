@@ -1,4 +1,17 @@
 ###
+### Notes
+###
+### The travis web interface may choke silently and fail to
+### update when there are issues with the .travis.yml file.
+###
+### "travis-lint" does not catch all errors which may lead to
+### silent failure.
+###
+### Shell-style comments must have "#" as the first character
+### of the line.
+###
+
+###
 ### language
 ###
 
@@ -7,7 +20,9 @@ language: emacs-lisp
 ###
 ### defining the build matrix
 ###
-### -==> each variation in env/matrix will be built and tested <===
+### ===>                                                       <===
+### ===> each variation in env/matrix will be built and tested <===
+### ===>                                                       <===
 ###
 ### variables under env/global are available but don't
 ### define a separate variation
