@@ -26,7 +26,6 @@ matrix:
 ###
 
 before_install:
-  # only needed if the repo has submodules
   - git submodule --quiet update --init --recursive
 
 install:
@@ -35,7 +34,6 @@ install:
         sudo apt-get install -qq emacs22-gtk emacs22-el;
     fi
   - if [ "$EMACS" = 'emacs23' ]; then
-        # the stock Emacs is 23, but with no GUI support
         sudo apt-get update -qq &&
         sudo apt-get install -qq emacs23-gtk emacs23-el;
     fi
@@ -53,7 +51,6 @@ install:
 
 before_script:
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
-        # get bleeding-edge dependencies to go with snapshot
         make downloads-latest;
     else
         make downloads;
