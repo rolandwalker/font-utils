@@ -39,6 +39,18 @@ matrix:
         - SOME_TOKEN=some_value
 
 ###
+### limit build attempts to defined branches
+###
+### - Seems to be the only way to keep feature branches from
+###   breaking web badges.  Wouldn't this functionality make
+###   more sense in allow_failures, above?
+###
+
+branches:
+  only:
+    - master
+
+###
 ### runtime initialization
 ###
 
