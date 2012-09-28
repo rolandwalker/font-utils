@@ -28,7 +28,7 @@ matrix:
     - env: EMACS=emacs-snapshot
 
 ###
-### initialization of virtual test environment
+### runtime initialization
 ###
 
 before_install:
