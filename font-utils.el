@@ -326,8 +326,9 @@ scratch."
             (remhash fuzzy-name font-utils-all-names))
           (persistent-softest-store (intern (format "checksum-%s" window-system))
                                     new-checksum font-utils-use-persistent-storage)
-          (persistent-softest-store (intern (format "font-names-%s" window-system))
-                                    font-utils-all-names font-utils-use-persistent-storage)
+          (let ((persistent-soft-inhibit-sanity-checks t))
+            (persistent-softest-store (intern (format "font-names-%s" window-system))
+                                      font-utils-all-names font-utils-use-persistent-storage))
           (persistent-softest-flush font-utils-use-persistent-storage)))
       (when progress
         (message "Font cache ... done")))))
