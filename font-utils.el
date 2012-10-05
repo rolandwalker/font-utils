@@ -8,7 +8,7 @@
 ;; Version: 0.6.2
 ;; Last-Updated: 24 Sep 2012
 ;; EmacsWiki: FontUtils
-;; Package-Requires: ((persistent-soft "0.8.0") (pcache "0.2.3"))
+;; Package-Requires: ((persistent-soft "0.8.6") (pcache "0.2.3"))
 ;; Keywords: extensions
 ;;
 ;; Simplified BSD License
