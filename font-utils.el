@@ -290,9 +290,11 @@ echo area.
 When optional REGENERATE is true, always rebuild from
 scratch."
   (when (display-multi-font-p)
-    (when (not (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage)))
+    (when (and font-utils-use-persistent-storage
+               (not (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage))))
       (setq regenerate t))
-    (when (and (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage))
+    (when (and font-utils-use-persistent-storage
+               (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage))
                (version<
                 (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage)
                 (get 'font-utils 'custom-version)))
