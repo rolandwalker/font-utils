@@ -290,6 +290,13 @@ echo area.
 When optional REGENERATE is true, always rebuild from
 scratch."
   (when (display-multi-font-p)
+    (when (not (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage)))
+      (setq regenerate t))
+    (when (and (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage))
+               (version<
+                (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage)
+                (get 'font-utils 'custom-version)))
+      (setq regenerate t))
     (when regenerate
       (setq font-utils-all-names nil)
       (persistent-softest-store (intern (format "checksum-%s" window-system))
@@ -329,6 +336,9 @@ scratch."
           (let ((persistent-soft-inhibit-sanity-checks t))
             (persistent-softest-store (intern (format "font-names-%s" window-system))
                                       font-utils-all-names font-utils-use-persistent-storage))
+          (persistent-softest-store 'font-utils-data-version
+                                    (get 'font-utils 'custom-version)
+                                    font-utils-use-persistent-storage)
           (persistent-softest-flush font-utils-use-persistent-storage)))
       (when progress
         (message "Font cache ... done")))))
