@@ -26,9 +26,12 @@ font names rather than font objects:
 
 	font-utils-exists-p
 	font-utils-first-existing-font
+	font-utils-is-qualified-variant
 	font-utils-lenient-name-equal
 	font-utils-list-names
 	font-utils-name-from-xlfd
+	font-utils-normalize-name
+	font-utils-parse-name
 	font-utils-read-name
 
 The most generally useful of these is `font-utils-exists-p`, which

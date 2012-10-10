@@ -32,9 +32,12 @@
 ;;
 ;;     `font-utils-exists-p'
 ;;     `font-utils-first-existing-font'
+;;     `font-utils-is-qualified-variant'
 ;;     `font-utils-lenient-name-equal'
 ;;     `font-utils-list-names'
 ;;     `font-utils-name-from-xlfd'
+;;     `font-utils-normalize-name'
+;;     `font-utils-parse-name'
 ;;     `font-utils-read-name'
 ;;
 ;; The most generally useful of these is `font-utils-exists-p', which
@@ -219,15 +222,29 @@ the pathological case with regard to startup time."
 
 ;;; utility functions
 
+;; copied from string-utils
+(defun font-utils--repair-split-list (list-val separator)
+  "Repair list LIST-VAL, split at string SEPARATOR, if SEPARATOR was escaped."
+  (let ((ret-val nil))
+    (while list-val
+      (let ((top (pop list-val)))
+        (while (string-match-p "\\\\\\'" top)
+          (callf concat top separator)
+          (when list-val
+            (callf concat top (pop list-val))))
+        (push top ret-val)))
+    (setq ret-val (nreverse ret-val))))
+
 ;;;###autoload
 (defun font-utils-name-from-xlfd (xlfd)
   "Return the font-family name from XLFD, a string.
 
 This function accounts for the fact that the XLFD
 delimiter, \"-\", is a legal character within fields."
-  (let ((elts (split-string
-               (replace-regexp-in-string
-                "\\-\\(semi\\|demi\\|half\\|double\\|ultra\\|extra\\)-" "-\\1_" xlfd) "-")))
+  (let ((elts (font-utils--repair-split-list
+               (split-string
+                (replace-regexp-in-string
+                 "\\-\\(semi\\|demi\\|half\\|double\\|ultra\\|extra\\)-" "-\\1_" xlfd) "-") "-")))
     (if (>= (length elts) 15)
         (mapconcat 'identity
                    (nreverse
@@ -236,6 +253,68 @@ delimiter, \"-\", is a legal character within fields."
                      (nreverse
                       (nthcdr 2 elts)))) "-")
       (nth 2 elts))))
+
+;; todo validation of specifications,
+;;  - detection of duplication
+;;  - expansion of aliases
+;;;###autoload
+(defun font-utils-parse-name (font-name)
+  "Parse FONT-NAME which may contain fontconfig-style specifications.
+
+Returns two-element list.  The car is the font family name as a string.
+The cadr is the specifications as a normalized and sorted list."
+  (save-match-data
+    (let ((specs nil))
+      (when (string-match "[^\\]\\(:.+\\)\\'" font-name)
+        (callf or specs "")
+        (setq specs (match-string 1 font-name))
+        (setq font-name (replace-match "" 'fixedcase 'literal font-name 1)))
+      (when (string-match "[^\\]\\(-\\([0-9]+\\(?:\\.[0-9]+\\)?\\)\\)\\'" font-name)
+        (callf or specs "")
+        (callf concat specs (format ":size=%s" (match-string 2 font-name)))
+        (setq font-name (replace-match "" 'fixedcase 'literal font-name 1)))
+      (when specs
+         (setq specs
+               (sort
+                (mapcar 'downcase
+                        (font-utils--repair-split-list
+                         (split-string specs ":" t) ":"))
+                'string<)))
+      (list font-name specs))))
+
+;;;###autoload
+(defun font-utils-normalize-name (font-name)
+  "Normalize FONT-NAME which may contain fontconfig-style specifications."
+  (let ((parsed (font-utils-parse-name font-name)))
+    (mapconcat 'identity (cons (car parsed) (cadr parsed)) ":")))
+
+;;;###autoload
+(defun font-utils-lenient-name-equal (font-name-a font-name-b)
+  "Leniently match two strings, FONT-NAME-A and FONT-NAME-B."
+  (setq font-name-a (car (font-utils-parse-name font-name-a)))
+  (setq font-name-b (car (font-utils-parse-name font-name-b)))
+  (setq font-name-a (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-a))
+  (setq font-name-b (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-b))
+  (string-equal (downcase font-name-a) (downcase font-name-b)))
+
+;;;###autoload
+(defun font-utils-is-qualified-variant (font-name-1 font-name-2)
+  "Test whether FONT-NAME-1 and FONT-NAME-2 are qualified variants of the same font.
+
+Qualifications are fontconfig-style specifications added to a
+font name, such as \":width=condensed\"."
+  (let ((parsed-name-1 (font-utils-parse-name font-name-1))
+        (parsed-name-2 (font-utils-parse-name font-name-2)))
+    (cond
+      ((and (null (cadr parsed-name-1))
+            (null (cadr parsed-name-2)))
+       nil)
+      ((not (font-utils-lenient-name-equal (car parsed-name-1) (car parsed-name-2)))
+       nil)
+      ((not (equal (cadr parsed-name-1) (cadr parsed-name-2)))
+       t)
+      (t
+       nil))))
 
 (defun font-utils-create-fuzzy-matches (font-name &optional keep-size)
   "Return a list of approximate matches to FONT-NAME.
@@ -360,17 +439,6 @@ Uses `ido-completing-read' if optional IDO is set."
                               (font-utils-list-names))))
       (replace-regexp-in-string "_" " "
          (funcall reader prompt font-names nil nil nil font-name-history)))))
-
-;;;###autoload
-(defun font-utils-lenient-name-equal (font-name-a font-name-b)
-  "Leniently match two strings, FONT-NAME-A and FONT-NAME-B."
-  (setq font-name-a (replace-regexp-in-string ":[^:]*\\'"   "" font-name-a))
-  (setq font-name-b (replace-regexp-in-string ":[^:]*\\'"   "" font-name-b))
-  (setq font-name-a (replace-regexp-in-string "-[0-9.]+\\'" "" font-name-a))
-  (setq font-name-b (replace-regexp-in-string "-[0-9.]+\\'" "" font-name-b))
-  (setq font-name-a (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-a))
-  (setq font-name-b (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-b))
-  (string-equal (downcase font-name-a) (downcase font-name-b)))
 
 ;;;###autoload
 (defun font-utils-exists-p (font-name &optional point-size strict scope)

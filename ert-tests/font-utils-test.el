@@ -13,6 +13,111 @@
 (require 'font-utils)
 
 
+;;; font-utils--repair-split-list
+
+(ert-deftest font-utils--repair-split-list-01 nil
+  (let* ((value "this:that:the:other")
+         (split-val (split-string value ":")))
+    (should
+     (equal split-val
+            (font-utils--repair-split-list split-val ":")))))
+
+(ert-deftest font-utils--repair-split-list-02 nil
+  (let* ((value "this:that:the\\:other")
+         (split-val (split-string value ":")))
+    (should
+     (equal '("this" "that" "the\\:other")
+            (font-utils--repair-split-list split-val ":")))))
+
+(ert-deftest font-utils--repair-split-list-03 nil
+  (let* ((value "this:that:the:other:")
+         (split-val (split-string value ":")))
+    (should
+     (equal split-val
+            (font-utils--repair-split-list split-val ":")))))
+
+(ert-deftest font-utils--repair-split-list-04 nil
+  (let* ((value "this:that:the:other\\:")
+         (split-val (split-string value ":")))
+    (should
+     (equal '("this" "that" "the" "other\\:")
+            (font-utils--repair-split-list split-val ":")))))
+
+(ert-deftest font-utils--repair-split-list-05 nil
+  (should
+   (equal '("family" "demi\\-bold")
+          (font-utils--repair-split-list
+           (split-string (replace-regexp-in-string
+                          "\\-\\(semi\\|demi\\|half\\|double\\|ultra\\|extra\\)-" "-\\1\\\\-" "family-demi-bold") "-") "-"))))
+
+
+;;; font-utils-parse-name
+
+(ert-deftest font-utils-parse-name-01 nil
+  (should
+   (equal '("Courier" nil)
+          (font-utils-parse-name "Courier"))))
+
+
+(ert-deftest font-utils-parse-name-02 nil
+  (should
+   (equal '("Courier\\:colon" nil)
+          (font-utils-parse-name "Courier\\:colon"))))
+
+
+(ert-deftest font-utils-parse-name-03 nil
+  (should
+   (equal '("Courier" ("size=12"))
+          (font-utils-parse-name "Courier-12"))))
+
+
+(ert-deftest font-utils-parse-name-04 nil
+  (should
+   (equal '("Courier" ("foundry=apple" "size=12" "width=condensed"))
+          (font-utils-parse-name "Courier-12:width=condensed:foundry=apple"))))
+
+
+(ert-deftest font-utils-parse-name-05 nil
+  (should
+   (equal '("Courier" ("foundry=apple" "size=12" "width=condensed"))
+          (font-utils-parse-name "Courier-12::foundry=apple:width=condensed:"))))
+
+
+;;; font-utils-normalize-name
+
+(ert-deftest font-utils-normalize-name-01 nil
+  (should
+   (equal "Courier:foundry=apple:size=12:width=condensed"
+          (font-utils-normalize-name "Courier-12::width=condensed:foundry=apple:"))))
+
+
+;;; font-utils-is-qualified-variant
+
+(ert-deftest font-utils-is-qualified-variant-01 nil
+  (should-not
+   (font-utils-is-qualified-variant "Dai Banna SIL Book" "Dai Banna SIL Book")))
+
+(ert-deftest font-utils-is-qualified-variant-02 nil
+  (should
+   (font-utils-is-qualified-variant "Dai Banna SIL Book" "Dai Banna SIL Book:style=Regular")))
+
+(ert-deftest font-utils-is-qualified-variant-03 nil
+  (should
+   (font-utils-is-qualified-variant "Dai Banna SIL Book:style=Regular" "Dai Banna SIL Book")))
+
+(ert-deftest font-utils-is-qualified-variant-04 nil
+  (should-not
+   (font-utils-is-qualified-variant "Dai Banna SIL Book:style=Regular" "Dai Banna SIL Book:style=Regular")))
+
+(ert-deftest font-utils-is-qualified-variant-05 nil
+  (should-not
+   (font-utils-is-qualified-variant "Dai Banna SIL Book:style=Regular:width=condensed" "Dai Banna SIL Book:style=Regular:width=condensed")))
+
+(ert-deftest font-utils-is-qualified-variant-06 nil
+  (should-not
+   (font-utils-is-qualified-variant "Dai Banna SIL Book:style=Regular:width=condensed" "Dai Banna SIL Book:width=condensed:style=Regular")))
+
+
 ;;; font-utils-name-from-xlfd
 
 (ert-deftest font-utils-name-from-xlfd-01 nil
