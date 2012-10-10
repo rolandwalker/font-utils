@@ -299,10 +299,14 @@ The cadr is the specifications as a normalized and sorted list."
 
 ;;;###autoload
 (defun font-utils-is-qualified-variant (font-name-1 font-name-2)
-  "Test whether FONT-NAME-1 and FONT-NAME-2 are qualified variants of the same font.
+  "Whether FONT-NAME-1 and FONT-NAME-2 are different variants of the same font.
 
 Qualifications are fontconfig-style specifications added to a
-font name, such as \":width=condensed\"."
+font name, such as \":width=condensed\".
+
+To return t, the font families must be identical, and the
+qualifications must differ.  If FONT-NAME-1 and FONT-NAME-2 are
+identical, returns nil."
   (let ((parsed-name-1 (font-utils-parse-name font-name-1))
         (parsed-name-2 (font-utils-parse-name font-name-2)))
     (cond
