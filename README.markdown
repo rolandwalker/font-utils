@@ -14,8 +14,8 @@ Quickstart
 (font-utils-exists-p "Courier")
 ```
 
-font-utils
-----------
+Explanation
+-----------
 
 Font-utils is a collection of functions for working with fonts.
 This library has no user-level interface; it is only useful
