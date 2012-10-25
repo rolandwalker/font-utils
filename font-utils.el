@@ -126,7 +126,7 @@
 ;;; Code:
 ;;
 
-;;; requires
+;;; requirements
 
 ;; for callf, callf2, intersection, remove-if-not
 (require 'cl)
