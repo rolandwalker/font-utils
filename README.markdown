@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/rolandwalker/font-utils.png)](http://travis-ci.org/rolandwalker/font-utils)
+[![Build Status](https://secure.travis-ci.org/rolandwalker/font-utils.png?branch=master)](http://travis-ci.org/rolandwalker/font-utils)
 
 Overview
 ========
