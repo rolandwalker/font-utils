@@ -144,7 +144,9 @@
 (defgroup font-utils nil
   "Utility functions for working with fonts."
   :version "0.6.8"
-  :link '(emacs-commentary-link "font-utils")
+  :link '(emacs-commentary-link :tag "Commentary" "font-utils")
+  :link '(url-link :tag "Github" "http://github.com/rolandwalker/font-utils")
+  :link '(url-link :tag "EmacsWiki" "http://emacswiki.org/emacs/FontUtils")
   :prefix "font-utils-"
   :group 'extensions)
 
