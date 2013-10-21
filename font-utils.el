@@ -203,6 +203,13 @@ the pathological case with regard to startup time."
 
 ;;; compatibility functions
 
+(unless (fboundp 'string-match-p)
+  ;; added in 23.x
+  (defun string-match-p (regexp string &optional start)
+    "Same as `string-match' except this function does not change the match data."
+    (let ((inhibit-changing-match-data t))
+      (string-match regexp string start))))
+
 (defun persistent-softest-store (symbol value location &optional expiration)
   "Call `persistent-soft-store' but don't fail when library not present."
   (ignore-errors (persistent-soft-store symbol value location expiration)))
