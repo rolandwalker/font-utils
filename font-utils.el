@@ -1,6 +1,6 @@
 ;;; font-utils.el --- Utility functions for working with fonts
 ;;
-;; Copyright (c) 2012 Roland Walker
+;; Copyright (c) 2012-13 Roland Walker
 ;;
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/font-utils
