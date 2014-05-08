@@ -4,7 +4,7 @@
 ;;
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/font-utils
-;; URL: http://raw.github.com/rolandwalker/font-utils/master/font-utils.el
+;; URL: http://raw.githubusercontent.com/rolandwalker/font-utils/master/font-utils.el
 ;; Version: 0.7.0
 ;; Last-Updated: 22 Oct 2013
 ;; EmacsWiki: FontUtils
