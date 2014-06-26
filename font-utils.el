@@ -451,7 +451,7 @@ Uses `ido-completing-read' if optional IDO is set."
                                    (replace-regexp-in-string " " "_" x))
                               (font-utils-list-names))))
       (replace-regexp-in-string "_" " "
-         (funcall reader prompt font-names nil nil nil font-name-history)))))
+         (funcall reader prompt font-names nil nil nil 'font-name-history)))))
 
 ;;;###autoload
 (defun font-utils-exists-p (font-name &optional point-size strict scope)
