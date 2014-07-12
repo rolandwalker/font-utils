@@ -535,7 +535,8 @@ must \(leniently\) match."
                         ;; find the font
                         (catch 'font
                           (dolist (name font-name-list)
-                            (let* ((query-name (concat name fontconfig-params))
+                            ;; trailing colon disambiguates eg font names ending with "Italic"
+                            (let* ((query-name (concat name fontconfig-params ":"))
                                    (font-vec (with-local-quit (ignore-errors (font-info query-name)))))
                               (when (and font-vec
                                          (or (find-font (font-spec :name name))    ; verify - some systems return the
