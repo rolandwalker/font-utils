@@ -1,12 +1,10 @@
 [![Build Status](https://secure.travis-ci.org/rolandwalker/font-utils.png?branch=master)](http://travis-ci.org/rolandwalker/font-utils)
 
-Overview
-========
+# Overview
 
 Utility functions for working with fonts in Emacs.
 
-Quickstart
-----------
+## Quickstart
 
 ```elisp
 (require 'font-utils)
@@ -14,8 +12,7 @@ Quickstart
 (font-utils-exists-p "Courier")
 ```
 
-Explanation
------------
+## Explanation
 
 Font-utils is a collection of functions for working with fonts.
 This library has no user-level interface; it is only useful
@@ -45,8 +42,7 @@ Emacs can find it, and add the following to your ~/.emacs file:
 (require 'font-utils)
 ```
 
-Compatibility and Requirements
-------------------------------
+## Compatibility and Requirements
 
 	GNU Emacs version 24.4-devel     : yes, at the time of writing
 	GNU Emacs version 24.3           : yes
