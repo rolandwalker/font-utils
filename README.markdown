@@ -35,8 +35,8 @@ The most generally useful of these is `font-utils-exists-p`, which
 tests whether a font matching the given name is currently available
 for use.
 
-To use font-utils, place the font-utils.el library somewhere
-Emacs can find it, and add the following to your ~/.emacs file:
+To use font-utils, place the `font-utils.el` library somewhere
+Emacs can find it, and add the following to your `~/.emacs` file:
 
 ```elisp
 (require 'font-utils)
