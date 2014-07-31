@@ -4,6 +4,10 @@
 
 Utility functions for working with fonts in Emacs.
 
+ * [Quickstart](#quickstart)
+ * [Explanation](#explanation)
+ * [Compatibility and Requirements](#compatibility-and-requirements)
+
 ## Quickstart
 
 ```elisp
