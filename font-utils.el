@@ -398,24 +398,8 @@ scratch."
                                             emacs-version
                                             (get 'font-utils 'custom-version)))
          (checksum-key (intern (format "checksum-%s" cache-id)))
-         (font-names-key (intern (format "font-names-%s" cache-id)))
-         (version-key 'font-utils-data-version))
+         (font-names-key (intern (format "font-names-%s" cache-id))))
     (when (display-multi-font-p)
-      (when (and font-utils-use-persistent-storage
-                 (not (stringp (persistent-softest-fetch
-                                version-key
-                                font-utils-use-persistent-storage))))
-        (setq regenerate t))
-      (when (and font-utils-use-persistent-storage
-                 (stringp (persistent-softest-fetch
-                           version-key
-                           font-utils-use-persistent-storage))
-                 (version<
-                  (persistent-softest-fetch
-                   version-key
-                   font-utils-use-persistent-storage)
-                  (get 'font-utils 'custom-version)))
-        (setq regenerate t))
       (when regenerate
         (setq font-utils-all-names nil)
         (persistent-softest-store checksum-key
@@ -461,9 +445,6 @@ scratch."
                font-names-key
                font-utils-all-names
                font-utils-use-persistent-storage))
-            (persistent-softest-store version-key
-                                      (get 'font-utils 'custom-version)
-                                      font-utils-use-persistent-storage)
             (persistent-softest-flush font-utils-use-persistent-storage)))
         (when progress
           (message "Font cache ... done"))))))
