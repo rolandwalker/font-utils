@@ -549,13 +549,15 @@ must \(leniently\) match."
                         (when scope
                           (callf2 intersection scope font-name-list :test 'font-utils-lenient-name-equal))
 
-                        ;; constrain font list by font cache if possible
+                        ;; if the font cache is available, use it to constrain the
+                        ;; font list and canonicalize the name
                         (when (and font-utils-use-memory-cache
                                    (hash-table-p font-utils-all-names))
-                          (setq font-name-list (remove-if-not #'(lambda (key)
-                                                                  (gethash (upcase key)
-                                                                           font-utils-all-names))
-                                                              font-name-list)))
+                          (setq font-name-list (delq nil (mapcar #'(lambda (key)
+                                                                     (gethash (upcase key)
+                                                                              font-utils-all-names))
+                                                                 font-name-list))))
+
                         ;; find the font
                         (catch 'font
                           (dolist (name font-name-list)
