@@ -393,61 +393,73 @@ scratch."
          (checksum-key (intern (format "checksum-%s" cache-id)))
          (font-names-key (intern (format "font-names-%s" cache-id)))
          (version-key 'font-utils-data-version))
-  (when (display-multi-font-p)
-    (when (and font-utils-use-persistent-storage
-               (not (stringp (persistent-softest-fetch version-key font-utils-use-persistent-storage))))
-      (setq regenerate t))
-    (when (and font-utils-use-persistent-storage
-               (stringp (persistent-softest-fetch version-key font-utils-use-persistent-storage))
-               (version<
-                (persistent-softest-fetch version-key font-utils-use-persistent-storage)
-                (get 'font-utils 'custom-version)))
-      (setq regenerate t))
-    (when regenerate
-      (setq font-utils-all-names nil)
-      (persistent-softest-store checksum-key
-                             nil font-utils-use-persistent-storage)
-      (persistent-softest-store font-names-key
-                             nil font-utils-use-persistent-storage)
-      (persistent-softest-flush font-utils-use-persistent-storage))
-    (unless (or (hash-table-p font-utils-all-names)
-                (not font-utils-use-memory-cache))
-      (when progress
-        (message "Font cache ... checking"))
-      (let* ((old-checksum (persistent-softest-fetch
-                            checksum-key font-utils-use-persistent-storage))
-             (listing (font-utils-list-names))
-             (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
-             (dupes nil))
-        (when (equal old-checksum new-checksum)
-          (setq font-utils-all-names (persistent-softest-fetch
-                                      font-names-key
-                                      font-utils-use-persistent-storage)))
-        (unless (hash-table-p font-utils-all-names)
-          (when progress
-            (message "Font cache ... rebuilding"))
-          (setq font-utils-all-names (make-hash-table :size (* 5 (length listing)) :test 'equal))
-          (dolist (font-name listing)
-            (dolist (fuzzy-name (font-utils-create-fuzzy-matches font-name))
-              (callf upcase fuzzy-name)
-              (when (and (gethash fuzzy-name font-utils-all-names)
-                         (not (equal (gethash fuzzy-name font-utils-all-names) font-name)))
-                (push fuzzy-name dupes))
-              (puthash (upcase fuzzy-name) font-name font-utils-all-names)))
-          (delete-dups dupes)
-          (dolist (fuzzy-name dupes)
-            (remhash fuzzy-name font-utils-all-names))
-          (persistent-softest-store checksum-key
-                                    new-checksum font-utils-use-persistent-storage)
-          (let ((persistent-soft-inhibit-sanity-checks t))
-            (persistent-softest-store font-names-key
-                                      font-utils-all-names font-utils-use-persistent-storage))
-          (persistent-softest-store version-key
-                                    (get 'font-utils 'custom-version)
-                                    font-utils-use-persistent-storage)
-          (persistent-softest-flush font-utils-use-persistent-storage)))
-      (when progress
-        (message "Font cache ... done"))))))
+    (when (display-multi-font-p)
+      (when (and font-utils-use-persistent-storage
+                 (not (stringp (persistent-softest-fetch
+                                version-key
+                                font-utils-use-persistent-storage))))
+        (setq regenerate t))
+      (when (and font-utils-use-persistent-storage
+                 (stringp (persistent-softest-fetch
+                           version-key
+                           font-utils-use-persistent-storage))
+                 (version<
+                  (persistent-softest-fetch
+                   version-key
+                   font-utils-use-persistent-storage)
+                  (get 'font-utils 'custom-version)))
+        (setq regenerate t))
+      (when regenerate
+        (setq font-utils-all-names nil)
+        (persistent-softest-store checksum-key
+                                  nil
+                                  font-utils-use-persistent-storage)
+        (persistent-softest-store font-names-key
+                                  nil
+                                  font-utils-use-persistent-storage)
+        (persistent-softest-flush font-utils-use-persistent-storage))
+      (unless (or (hash-table-p font-utils-all-names)
+                  (not font-utils-use-memory-cache))
+        (when progress
+          (message "Font cache ... checking"))
+        (let* ((old-checksum (persistent-softest-fetch
+                              checksum-key
+                              font-utils-use-persistent-storage))
+               (listing (font-utils-list-names))
+               (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
+               (dupes nil))
+          (when (equal old-checksum new-checksum)
+            (setq font-utils-all-names (persistent-softest-fetch
+                                        font-names-key
+                                        font-utils-use-persistent-storage)))
+          (unless (hash-table-p font-utils-all-names)
+            (when progress
+              (message "Font cache ... rebuilding"))
+            (setq font-utils-all-names (make-hash-table :size (* 5 (length listing)) :test 'equal))
+            (dolist (font-name listing)
+              (dolist (fuzzy-name (font-utils-create-fuzzy-matches font-name))
+                (callf upcase fuzzy-name)
+                (when (and (gethash fuzzy-name font-utils-all-names)
+                           (not (equal (gethash fuzzy-name font-utils-all-names) font-name)))
+                  (push fuzzy-name dupes))
+                (puthash (upcase fuzzy-name) font-name font-utils-all-names)))
+            (delete-dups dupes)
+            (dolist (fuzzy-name dupes)
+              (remhash fuzzy-name font-utils-all-names))
+            (persistent-softest-store checksum-key
+                                      new-checksum
+                                      font-utils-use-persistent-storage)
+            (let ((persistent-soft-inhibit-sanity-checks t))
+              (persistent-softest-store
+               font-names-key
+               font-utils-all-names
+               font-utils-use-persistent-storage))
+            (persistent-softest-store version-key
+                                      (get 'font-utils 'custom-version)
+                                      font-utils-use-persistent-storage)
+            (persistent-softest-flush font-utils-use-persistent-storage)))
+        (when progress
+          (message "Font cache ... done"))))))
 
 ;;;###autoload
 (defun font-utils-read-name (&optional ido)
