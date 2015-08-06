@@ -66,6 +66,9 @@
 ;;
 ;; Bugs
 ;;
+;;     Behavior/echo messages are not sane when font-utils-use-memory-cache
+;;     is nil, or pcache is not available.
+;;
 ;;     Checking for font availability is slow on most systems.
 ;;     Workaround: where supported, font information will be cached
 ;;     to disk.  See customize for more.
@@ -78,6 +81,8 @@
 ;;     describes four styles of font name.
 ;;
 ;; TODO
+;;
+;;     Better support for disabling caching.
 ;;
 ;;     Possibly return a font object instead of font-info vector
 ;;     from font-utils-exists-p.
