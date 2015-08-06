@@ -399,30 +399,31 @@ scratch."
                                             emacs-version
                                             (get 'font-utils 'custom-version)))
          (checksum-key (intern (format "checksum-%s" cache-id)))
-         (font-names-key (intern (format "font-names-%s" cache-id))))
+         (font-names-key (intern (format "font-names-%s" cache-id)))
+         (store-place font-utils-use-persistent-storage))
       (when regenerate
         (setq font-utils-all-names nil)
         (persistent-softest-store checksum-key
                                   nil
-                                  font-utils-use-persistent-storage)
+                                  store-place)
         (persistent-softest-store font-names-key
                                   nil
-                                  font-utils-use-persistent-storage)
-        (persistent-softest-flush font-utils-use-persistent-storage))
+                                  store-place)
+        (persistent-softest-flush store-place))
       (unless (or (hash-table-p font-utils-all-names)
                   (not font-utils-use-memory-cache))
         (when progress
           (message "Font cache ... checking"))
         (let* ((old-checksum (persistent-softest-fetch
                               checksum-key
-                              font-utils-use-persistent-storage))
+                              store-place))
                (listing (font-utils-list-names))
                (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
                (dupes nil))
           (when (equal old-checksum new-checksum)
             (setq font-utils-all-names (persistent-softest-fetch
                                         font-names-key
-                                        font-utils-use-persistent-storage)))
+                                        store-place)))
           (unless (hash-table-p font-utils-all-names)
             (when progress
               (message "Font cache ... rebuilding"))
@@ -439,13 +440,13 @@ scratch."
               (remhash fuzzy-name font-utils-all-names))
             (persistent-softest-store checksum-key
                                       new-checksum
-                                      font-utils-use-persistent-storage)
+                                      store-place)
             (let ((persistent-soft-inhibit-sanity-checks t))
               (persistent-softest-store
                font-names-key
                font-utils-all-names
-               font-utils-use-persistent-storage))
-            (persistent-softest-flush font-utils-use-persistent-storage)))
+               store-place))
+            (persistent-softest-flush store-place)))
         (when progress
           (message "Font cache ... done"))))))
 
