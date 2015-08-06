@@ -244,6 +244,7 @@ the pathological case with regard to startup time."
         (push top ret-val)))
     (setq ret-val (nreverse ret-val))))
 
+;;;###autoload
 (defun font-utils-client-hostname nil
   "Guess the client hostname, respecting $SSH_CONNECTION."
   (let ((default "localhost"))
