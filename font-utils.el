@@ -311,7 +311,7 @@ The cadr is the specifications as a normalized and sorted list."
   (setq font-name-b (car (font-utils-parse-name font-name-b)))
   (setq font-name-a (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-a))
   (setq font-name-b (replace-regexp-in-string "[ \t_'\"-]+" "" font-name-b))
-  (string-equal (downcase font-name-a) (downcase font-name-b)))
+  (string-equal (upcase font-name-a) (upcase font-name-b)))
 
 ;;;###autoload
 (defun font-utils-is-qualified-variant (font-name-1 font-name-2)
