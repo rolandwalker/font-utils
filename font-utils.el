@@ -393,7 +393,7 @@ echo area.
 
 When optional REGENERATE is true, always rebuild from
 scratch."
-  (let* ((cache-id (format "w.%s-h.%s-e.%s" window-system
+  (let* ((cache-id (format "w:%s-h:%s-e:%s" window-system
                                             (font-utils-client-hostname)
                                             emacs-version))
          (checksum-key (intern (format "checksum-%s" cache-id)))
