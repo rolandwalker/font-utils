@@ -393,9 +393,10 @@ echo area.
 
 When optional REGENERATE is true, always rebuild from
 scratch."
-  (let* ((cache-id (format "w:%s-h:%s-e:%s" window-system
+  (let* ((cache-id (format "w:%s-h:%s-e:%s-l:%s" window-system
                                             (font-utils-client-hostname)
-                                            emacs-version))
+                                            emacs-version
+                                            (get 'font-utils 'custom-version)))
          (checksum-key (intern (format "checksum-%s" cache-id)))
          (font-names-key (intern (format "font-names-%s" cache-id)))
          (version-key 'font-utils-data-version))
