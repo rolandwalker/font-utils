@@ -393,13 +393,13 @@ echo area.
 
 When optional REGENERATE is true, always rebuild from
 scratch."
+  (when (display-multi-font-p)
   (let* ((cache-id (format "w:%s-h:%s-e:%s-l:%s" window-system
                                             (font-utils-client-hostname)
                                             emacs-version
                                             (get 'font-utils 'custom-version)))
          (checksum-key (intern (format "checksum-%s" cache-id)))
          (font-names-key (intern (format "font-names-%s" cache-id))))
-    (when (display-multi-font-p)
       (when regenerate
         (setq font-utils-all-names nil)
         (persistent-softest-store checksum-key
