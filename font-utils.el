@@ -553,8 +553,7 @@ must \(leniently\) match."
                         (when (and font-utils-use-memory-cache
                                    (hash-table-p font-utils-all-names))
                           (setq font-name-list (remove-if-not #'(lambda (key)
-                                                                  (gethash (upcase
-                                                                            (replace-regexp-in-string "-[0-9.]+\\'" "" key))
+                                                                  (gethash (upcase key)
                                                                            font-utils-all-names))
                                                               font-name-list)))
                         ;; find the font
