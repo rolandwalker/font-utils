@@ -498,9 +498,7 @@ Optional SCOPE is a list of font names, within which FONT-NAME
 must \(leniently\) match."
   (when (display-multi-font-p)
     (let ((args (list font-name point-size strict scope)))
-      (if (gethash args font-utils-exists-p-mem)
-          (gethash args font-utils-exists-p-mem)
-        ;; else
+      (or (gethash args font-utils-exists-p-mem)
         (save-match-data
           (when (fontp font-name 'font-spec)
             (when (and (floatp (font-get font-name :size))
