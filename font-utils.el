@@ -244,6 +244,12 @@ the pathological case with regard to startup time."
         (push top ret-val)))
     (setq ret-val (nreverse ret-val))))
 
+(defun font-utils-client-hostname nil
+  "Guess the client hostname, respecting $SSH_CONNECTION."
+  (let ((default "localhost"))
+    (or (car (split-string (or (getenv "SSH_CONNECTION") default)))
+        default)))
+
 ;;;###autoload
 (defun font-utils-name-from-xlfd (xlfd)
   "Return the font-family name from XLFD, a string.
@@ -381,6 +387,11 @@ echo area.
 
 When optional REGENERATE is true, always rebuild from
 scratch."
+  (let* ((cache-id (format "w.%s-h.%s-e.%s" window-system
+                                            (font-utils-client-hostname)
+                                            emacs-version))
+         (checksum-key (intern (format "checksum-%s" cache-id)))
+         (font-names-key (intern (format "font-names-%s" cache-id))))
   (when (display-multi-font-p)
     (when (and font-utils-use-persistent-storage
                (not (stringp (persistent-softest-fetch 'font-utils-data-version font-utils-use-persistent-storage))))
@@ -393,9 +404,9 @@ scratch."
       (setq regenerate t))
     (when regenerate
       (setq font-utils-all-names nil)
-      (persistent-softest-store (intern (format "checksum-%s" window-system))
+      (persistent-softest-store checksum-key
                              nil font-utils-use-persistent-storage)
-      (persistent-softest-store (intern (format "font-names-%s" window-system))
+      (persistent-softest-store font-names-key
                              nil font-utils-use-persistent-storage)
       (persistent-softest-flush font-utils-use-persistent-storage))
     (unless (or (hash-table-p font-utils-all-names)
@@ -403,13 +414,13 @@ scratch."
       (when progress
         (message "Font cache ... checking"))
       (let* ((old-checksum (persistent-softest-fetch
-                            (intern (format "checksum-%s" window-system)) font-utils-use-persistent-storage))
+                            checksum-key font-utils-use-persistent-storage))
              (listing (font-utils-list-names))
              (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
              (dupes nil))
         (when (equal old-checksum new-checksum)
           (setq font-utils-all-names (persistent-softest-fetch
-                                      (intern (format "font-names-%s" window-system))
+                                      font-names-key
                                       font-utils-use-persistent-storage)))
         (unless (hash-table-p font-utils-all-names)
           (when progress
@@ -425,17 +436,17 @@ scratch."
           (delete-dups dupes)
           (dolist (fuzzy-name dupes)
             (remhash fuzzy-name font-utils-all-names))
-          (persistent-softest-store (intern (format "checksum-%s" window-system))
+          (persistent-softest-store checksum-key
                                     new-checksum font-utils-use-persistent-storage)
           (let ((persistent-soft-inhibit-sanity-checks t))
-            (persistent-softest-store (intern (format "font-names-%s" window-system))
+            (persistent-softest-store font-names-key
                                       font-utils-all-names font-utils-use-persistent-storage))
           (persistent-softest-store 'font-utils-data-version
                                     (get 'font-utils 'custom-version)
                                     font-utils-use-persistent-storage)
           (persistent-softest-flush font-utils-use-persistent-storage)))
       (when progress
-        (message "Font cache ... done")))))
+        (message "Font cache ... done"))))))
 
 ;;;###autoload
 (defun font-utils-read-name (&optional ido)
