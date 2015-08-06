@@ -394,13 +394,14 @@ echo area.
 When optional REGENERATE is true, always rebuild from
 scratch."
   (when (display-multi-font-p)
-  (let* ((cache-id (format "w:%s-h:%s-e:%s-l:%s" window-system
-                                            (font-utils-client-hostname)
-                                            emacs-version
-                                            (get 'font-utils 'custom-version)))
-         (checksum-key (intern (format "checksum-%s" cache-id)))
-         (font-names-key (intern (format "font-names-%s" cache-id)))
-         (store-place font-utils-use-persistent-storage))
+    (let* ((cache-id (format "w:%s-h:%s-e:%s-l:%s"
+                             window-system
+                             (font-utils-client-hostname)
+                             emacs-version
+                             (get 'font-utils 'custom-version)))
+           (checksum-key   (intern (format "checksum-%s"   cache-id)))
+           (font-names-key (intern (format "font-names-%s" cache-id)))
+           (store-place font-utils-use-persistent-storage))
       (when regenerate
         (setq font-utils-all-names nil)
         (persistent-softest-store checksum-key
@@ -414,15 +415,13 @@ scratch."
                   (not font-utils-use-memory-cache))
         (when progress
           (message "Font cache ... checking"))
-        (let* ((old-checksum (persistent-softest-fetch
-                              checksum-key
+        (let* ((old-checksum (persistent-softest-fetch checksum-key
                               store-place))
                (listing (font-utils-list-names))
                (new-checksum (md5 (mapconcat 'identity (sort listing 'string<) "") nil nil 'utf-8))
                (dupes nil))
           (when (equal old-checksum new-checksum)
-            (setq font-utils-all-names (persistent-softest-fetch
-                                        font-names-key
+            (setq font-utils-all-names (persistent-softest-fetch font-names-key
                                         store-place)))
           (unless (hash-table-p font-utils-all-names)
             (when progress
@@ -442,10 +441,9 @@ scratch."
                                       new-checksum
                                       store-place)
             (let ((persistent-soft-inhibit-sanity-checks t))
-              (persistent-softest-store
-               font-names-key
-               font-utils-all-names
-               store-place))
+              (persistent-softest-store font-names-key
+                                        font-utils-all-names
+                                        store-place))
             (persistent-softest-flush store-place)))
         (when progress
           (message "Font cache ... done"))))))
