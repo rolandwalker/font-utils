@@ -6,7 +6,7 @@
 ;; Homepage: http://github.com/rolandwalker/font-utils
 ;; URL: http://raw.githubusercontent.com/rolandwalker/font-utils/master/font-utils.el
 ;; Version: 0.7.8
-;; Last-Updated:  6 Aug 2015
+;; Last-Updated: 23 January 2021
 ;; EmacsWiki: FontUtils
 ;; Package-Requires: ((persistent-soft "0.8.8") (pcache "0.2.3"))
 ;; Keywords: extensions
@@ -134,7 +134,7 @@
 ;;; requirements
 
 ;; for callf, callf2, intersection, remove-if-not
-(require 'cl)
+(require 'cl-lib)
 
 (autoload 'persistent-soft-store             "persistent-soft" "Under SYMBOL, store VALUE in the LOCATION persistent data store."    )
 (autoload 'persistent-soft-fetch             "persistent-soft" "Return the value for SYMBOL in the LOCATION persistent data store."  )
@@ -243,9 +243,9 @@ the pathological case with regard to startup time."
     (while list-val
       (let ((top (pop list-val)))
         (while (string-match-p "\\\\\\'" top)
-          (callf concat top separator)
+          (cl-callf concat top separator)
           (when list-val
-            (callf concat top (pop list-val))))
+            (cl-callf concat top (pop list-val))))
         (push top ret-val)))
     (setq ret-val (nreverse ret-val))))
 
@@ -287,20 +287,20 @@ The cadr is the specifications as a normalized and sorted list."
   (save-match-data
     (let ((specs nil))
       (when (string-match "[^\\]\\(:.+\\)\\'" font-name)
-        (callf or specs "")
+        (cl-callf or specs "")
         (setq specs (match-string 1 font-name))
         (setq font-name (replace-match "" 'fixedcase 'literal font-name 1)))
       (when (string-match "[^\\]\\(-\\([0-9]+\\(?:\\.[0-9]+\\)?\\)\\)\\'" font-name)
-        (callf or specs "")
-        (callf concat specs (format ":size=%s" (match-string 2 font-name)))
+        (cl-callf or specs "")
+        (cl-callf concat specs (format ":size=%s" (match-string 2 font-name)))
         (setq font-name (replace-match "" 'fixedcase 'literal font-name 1)))
       (when specs
-         (setq specs
-               (sort
-                (mapcar 'downcase
-                        (font-utils--repair-split-list
-                         (split-string specs ":" t) ":"))
-                'string<)))
+        (setq specs
+              (sort
+               (mapcar 'downcase
+                       (font-utils--repair-split-list
+                        (split-string specs ":" t) ":"))
+               'string<)))
       (list font-name specs))))
 
 ;;;###autoload
@@ -374,7 +374,7 @@ If KEEP-SIZE is set, do not strip point sizes in the form
     (push (replace-regexp-in-string "[ \t_-]+" "-" font-name-uncamel) fuzzy-match-list)
     (setq fuzzy-match-list (nreverse fuzzy-match-list))
     (delete-dups fuzzy-match-list)
-    (remove-if-not #'(lambda (x) (string-match-p "[^ \t]" x)) fuzzy-match-list)))
+    (cl-remove-if-not #'(lambda (x) (string-match-p "[^ \t]" x)) fuzzy-match-list)))
 
 ;;;###autoload
 (defun font-utils-list-names ()
@@ -513,15 +513,15 @@ must \(leniently\) match."
                             (setq fontconfig-params (match-string 1 font-name))
                             (setq font-name (replace-match "" t t font-name))
                             (when (string-match "\\<size=\\([0-9.]+\\)" fontconfig-params)
-                              (callf or point-size (string-to-number (match-string 1 fontconfig-params)))
+                              (cl-callf or point-size (string-to-number (match-string 1 fontconfig-params)))
                               (setq fontconfig-params (replace-match "" t t fontconfig-params))))
                           (when (string-match "-\\([0-9.]+\\)\\'" font-name)
-                            (callf or point-size (string-to-number (match-string 1 font-name)))
+                            (cl-callf or point-size (string-to-number (match-string 1 font-name)))
                             (setq font-name (replace-match "" t t font-name)))
                           (when (stringp point-size)
-                            (callf string-to-number point-size))
+                            (cl-callf string-to-number point-size))
                           (when (numberp point-size)
-                            (callf concat fontconfig-params (format ":size=%s" (round point-size))))
+                            (cl-callf concat fontconfig-params (format ":size=%s" (round point-size))))
                           (setq fontconfig-params (replace-regexp-in-string "::+" ":" fontconfig-params))
 
                           ;; generate list of font names to try
@@ -531,7 +531,7 @@ must \(leniently\) match."
 
                           ;; constrain font list to scope requested
                           (when scope
-                            (callf2 intersection scope font-name-list :test 'font-utils-lenient-name-equal))
+                            (cl-callf2 intersection scope font-name-list :test 'font-utils-lenient-name-equal))
 
                           ;; if the font cache is available, use it to constrain the
                           ;; font list and canonicalize the name
