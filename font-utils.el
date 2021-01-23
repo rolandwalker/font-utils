@@ -531,7 +531,7 @@ must \(leniently\) match."
 
                           ;; constrain font list to scope requested
                           (when scope
-                            (cl-callf2 intersection scope font-name-list :test 'font-utils-lenient-name-equal))
+                            (cl-callf2 cl-intersection scope font-name-list :test 'font-utils-lenient-name-equal))
 
                           ;; if the font cache is available, use it to constrain the
                           ;; font list and canonicalize the name
