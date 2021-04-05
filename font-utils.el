@@ -429,7 +429,7 @@ scratch."
             (setq font-utils-all-names (make-hash-table :size (* 5 (length listing)) :test 'equal))
             (dolist (font-name listing)
               (dolist (fuzzy-name (font-utils-create-fuzzy-matches font-name))
-                (callf upcase fuzzy-name)
+                (cl-callf upcase fuzzy-name)
                 (when (and (gethash fuzzy-name font-utils-all-names)
                            (not (equal (gethash fuzzy-name font-utils-all-names) font-name)))
                   (push fuzzy-name dupes))
